@@ -1,0 +1,4 @@
+MININT-8GDE3HC
+
+$cred=Get-Credential
+Enter-PSSession -computername MININT-8GDE3HC -Credential $cred

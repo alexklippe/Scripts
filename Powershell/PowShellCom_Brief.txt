@@ -1,0 +1,206 @@
+
+
+smart logon: https://habrahabr.ru/post/258183/
+enter-pssession -computername dganzha -credential viacode\asalnikov
+
+*********************WSUS************************
+
+local DB connection:
+run SSMS with admin rights
+\\.\pipe\MICROSOFT##WID\tsql\query
+
+***********************************************
+
+wuauclt.exe /resetauthorization /detectnow /reportnow
+wuauclt /detectnow
+wuauclt /reportnow
+Invoke-Command -ScriptBlock {& cmd.exe rd /s /q %systemroot%\SoftwareDistribution}
+Invoke-Command -ScriptBlock {& cmd.exe del /f /q %systemroot%\WindowsUpdate.log}
+
+*********************Disks *************************
+get-WmiObject win32_logicaldisk
+Get-PhysicalDisk
+Get-WMIObject -Class Win32_Volume | Select DriveLetter,FreeSpace,Capacity,DeviceID,Label
+
+#physical disks
+Get-Disk | Select FriendlyName,TotalSize
+
+#rename volume
+Get-Volume -FileSystemLabel "New volume" | Set-Volume -NewFileSystemLabel
+
+
+[System.Environment]::OSVersion.Version
+
+cmd.exe /c mklink /d  c:\windows\installer d:\windows\Installer
+
+ipconfig /registerdns
+
+
+xcopy /s /e /i /h /o /y c:\windows\installer\* d:\windows\installer\
+cmd.exe /c mklink /d  c:\windows\installer d:\windows\Installer
+or 
+Invoke-Command -ScriptBlock {& cmd.exe /c mklink /d  c:\windows\installer d:\windows\Installer}
+
+get-content cpu.txt
+wbadmin get versions
+
+c:\windows\system32\cleanmgr.exe /sagerun:10 /tuneup:10 /verylowdisk /autoclean
+
+
+There are also some DISM commands that target the running operating system (ìonlineî). For example, you can use the following command to list the ìpackagesî installed:
+dism /online /get-packages /format:table
+DISM.exe /Online /Add-Package /PackagePath:c:\kb976571\Windows6.1-KB976571-v2-x64.msu
+
+Expand ñF:* c:\kb976571\Windows6.1-KB976571-v2-x64.msu c:\temp\976571
+DISM.exe /Online /Add-Package /PackagePath:c:\temp\976571\Windows6.1-KB976571-v2-x64.cab
+
+You could tweak the command. For example, use the following syntax to install the package silently and avoid restarting Windows:
+start /wait DISM.exe /Online /Add-Package /PackagePath:c:\temp\976571\Windows6.1-KB976571-v2-x64.cab /Quiet /NoRestart
+
+You could use a similar command to uninstall an update using DISM. Hereís the syntax for that:
+DISM.exe /Online /Remove-Package /PackagePath:c:\temp\976571\Windows6.1-KB976571-v2-x64.cab
+
+Check DISM
+DISM.exe /Online /Cleanup-image /Restorehealth
+
+******************** Rejoin if security trust broken***********************
+$cred=Get-Credential
+Reset-ComputerMachinePassword -Credential $cred -Server ****
+
+in CMD
+netdom resetpwd /s:dc /ud:gp2\**** /pd:
+
+******************** Join domain ***********************************
+$cred=Get-Credential
+Add-Computer -DomainName "****.**" -Credential $cred -Restart
+
+/**** ÒÔËÒÓÍ ÛÒÚÓÈÒÚ‚**********************
+gwmi Win32_PnPSignedDriver | select devicename,driverversion
+
+
+/**** ÒÔËÒÓÍ ÒÓÙÚ‡
+gwmi Win32_Product
+gwmi win32_product -Filter "Not Vendor like 'Microsoft%'"
+
+/******* winrm
+winrm quickconfig -q
+Enable-PSRemoting 
+Set-ExecutionPolicy -ExecutionPolicy unrestricted
+
+
+
+****************************** prepare image ***********
+ DO NOT surf the web as the built-in administrator on a Windows PC
+Enable the built-in administrator account and give a password youíll be comfortable with entering dozens of times. Log in as the admin, and immediately delete the profile for the other account setup asked you to make after installing Windows
+
+https://web.sas.upenn.edu/jasonrw/2016/03/01/how-to-create-a-windows-image-for-mass-deployment/
+
+vssadmin delete shadows /All /Quiet
+del c:\Windows\SoftwareDistribution\Download\*.* /f /s /q
+del %windir%\$NT* /f /s /q /a:h
+del c:\Windows\Prefetch\*.* /f /s /q
+c:\windows\system32\cleanmgr /sagerun:1
+defrag c: /U /V
+
+wevtutil el 1>cleaneventlog.txt
+for /f %%x in (cleaneventlog.txt) do wevtutil cl %%x
+del cleaneventlog.txt
+
+***************************Sign PowerShell Script ****************
+https://blogs.technet.microsoft.com/heyscriptingguy/2010/06/16/hey-scripting-guy-how-can-i-sign-windows-powershell-scripts-with-an-enterprise-windows-pki-part-1-of-2/
+
+$cert = @(gci cert:\currentuser\my -codesigning)[0]
+Set-AuthenticodeSignature backup2.ps1 $cert
+
+***************************Rename computer***********************
+Rename the local computer
+Rename-Computer -NewName "A******" -DomainCredential ******\***** -Restart
+
+Rename a remote computer
+Rename-Computer -ComputerName "Srv01" -NewName "Server001" -LocalCredential Srv01\Admin01 -DomainCredential Domain01\Admin01 -Force -PassThru -Restart
+
+
+***************************Change Task Schedule backup password **********************
+schtasks /change /tn "Backup" /ru $env:computername\****** /rp pass**********
+
+run task 
+schtasks /run /tn "Backup"
+
+
+*** new task
+$action = New-ScheduledTaskAction -Execute powershell -Argument "c:\forit\backup\back.ps1"
+$trigger = New-ScheduledTaskTrigger -Daily -At $startTime -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration ([Timespan]::MaxValue)
+$principal = New-ScheduledTaskPrincipal -UserId "$($env:USERDOMAIN)\$($env:USERNAME)" -LogonType ServiceAccount
+$settings = New-ScheduledTaskSettingsSet -MultipleInstances Parallel
+
+ipconfig /flushdns
+
+
+
+
+*********************Software List **************************
+Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |  Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | Format-Table ñAutoSize
+
+Invoke-Command -cn wfe0, wfe1 -ScriptBlock {Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | select DisplayName, Publisher, InstallDate }
+
+
+
+********************BadBlocks********************
+check in read only
+sudo badblocks -v /dev/sda2
+
+First we have to write the location of the bad sectors into a flat file
+sudo badblocks /dev/sda2 > /home/zzz/bad-blocks
+
+then we need to feed the flat file into the FSCK command to mark these bad sectors as 'unusable\ sectors
+sudo fsck -l bad-blocks /dev/sda2
+
+*******************PXE with select*************
+
+https://habrahabr.ru/post/175669/
+
+
+******************* MS DCS ********************
+https://docs.microsoft.com/en-us/powershell/dsc/overview 
+
+https://github.com/PowerShell/DscResources 
+
+
+********************Virt PC start from device******************
+
+Set-SCVirtualMachine -VM "SA-TEST" ñFirstBootDevice "NIC,0"
+
+******************** Get App Info *****************************
+Get-WmiObject -Class Win32_Product -Filter "Name like 'Java(TM)%'" | Select -Expand Version
+
+
+******************** activate windows ***********************
+$computer = gc env:computername
+$key = "*****-*****"
+$service = get-wmiObject -query "select * from SoftwareLicensingService" -computername $computer
+$service.InstallProductKey($key)
+$service.RefreshLicenseStatus()
+
+
+
+******************** enable nested virtualization ************
+Set-VMProcessor -VMName <VMName> -ExposeVirtualizationExtensions $true
+disable
+Set-VMProcessor -VMName <VMName> -ExposeVirtualizationExtensions $false
+
+
+******************** SCCM Update Point ***********************
+https://everythingsccm.com/2017/03/27/configuring-wsus-with-sccm-current-branch-server-2016-part-i/
+https://everythingsccm.com/2017/08/04/configuring-wsus-with-sccm-current-branch-server-2016-part-ii-adrs-baselines/
+
+
+********************** installfeature ****************
+get-windowsFeature
+Install-windowsFeature -name 'name'
+Add-WindowsFeature RDS-Virtualization
+
+******************** SQL chane collation ***************
+sqlservr -m -T4022 -T3659 -s"SQL2016" -q"SQL_Latin1_General_CP1_CI_AI"
+„‰Â -s Ì‡Á‚‡ÌËÂ ËÌÒÚ‡ÌÒ‡
+
+

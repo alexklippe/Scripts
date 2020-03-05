@@ -1,0 +1,153 @@
+<style type="text/css">
+.dat {
+Font-size:10px;
+  font-family:Serif;
+}
+   .prob {
+Font-size:10px;
+  font-weight:bold;
+      font-family:Serif;
+}
+td {
+  padding:1px;
+  font-size:9px;
+}
+  p{
+      font-size:9px;
+  }
+</style>
+<table border="0" cellpadding="1" cellspacing="1">
+	<tbody>
+		<tr>
+			<td style="width:80%;padding:2px;">
+			<p><img alt="" src="http://192.168.2.244/gp2_3.png" style="width: 35px; height: 35px;float:left;" />МБУЗ Городская Поликлиника №2<br />
+			Тел. 8(8634)619-300</p>
+			</td>
+			<td style="border-color: rgb(0, 0, 0); text-align: center;width:200px;height:30px; vertical-align: top; border:1px;">Штрих код</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3 style="text-align: center;"><strong>Анализ мочи</strong></h3>
+
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>
+		<tr>
+			<td><strong>Фамилия</strong></td>
+			<td><strong><span class="dat">[@pmc.surname]</span></strong></td>
+			<td><strong>Серия полиса</strong></td>
+			<td><strong><span class="dat">[@agent.polis_ser]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Имя</strong></td>
+			<td><strong><span class="dat">[@pmc.firstname]</span></strong></td>
+			<td><strong>Номер полиса</strong></td>
+			<td><strong><span class="dat">[@agent.polis_numb]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>отчество</strong></td>
+			<td><strong><span class="dat">[@pmc.lastname]</span></strong></td>
+			<td><strong>Код страховой компании</strong></td>
+			<td><strong><span class="dat">[@agent.ic_code]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Дата рождения</strong></td>
+			<td><strong><span class="dat">[@agent.birthdate], возраст [@pmc.age] </span></strong></td>
+			<td><strong>Пол</strong></td>
+			<td><strong><span class="dat">[@pmc.sex]</span></strong></td>
+		</tr>
+		<tr>
+			<td rowspan="1"><strong>Удостоверение личности</strong></td>
+			<td rowspan="1"><span class="dat" style="font-size: 9px;">[@agent.doc_type]</span></td>
+			<td><strong><span class="dat">[@agent.doc_ser]</span></strong></td>
+			<td><strong><span class="dat">[@agent.doc_numb]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Дата выдачи УЛ</strong></td>
+			<td><strong style="font-size: 9px;"><span class="dat">[@agent.doc_when]</span></strong></td>
+			<td><strong>СНИЛС</strong></td>
+			<td><strong><span class="dat">[@pmc.mask_snils]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Адрес проживания</strong></td>
+			<td colspan="3" rowspan="1"><strong><span class="dat">[@addr_real.adr_full]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Направление ЛПУ</strong></td>
+			<td><span class="dat" style="font-size: 8px;">[@lpu.fullname]</span></td>
+			<td><strong>Код ЛПУ</strong></td>
+			<td><strong><span class="dat">[@lpu.code_lpu]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Филиал</strong></td>
+			<td colspan="3" rowspan="1"><strong><span class="dat">[@visit.dep]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>№ Участка, ФИО врача</strong></td>
+			<td colspan="3" rowspan="1"><span class="dat">[@visit.emp_fio], [@visit.emp_jobtitle],&nbsp;[@visit.emp_spec], [@visit.cablab]</span></td>
+		</tr>
+		<tr>
+			<td><strong>Время взятия материала</strong></td>
+			<td colspan="3" rowspan="1"><strong>&nbsp;</strong></td>
+		</tr>
+		<tr>
+			<td><strong>Направительный диагноз</strong></td>
+			<td colspan="3" rowspan="1"><span class="dat">[@mkb_main.code]&nbsp;&nbsp;[@mkb_main.mkb_name]</span></td>
+		</tr>
+	</tbody>
+</table>
+<br />
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<caption>Ⅰ. Общие свойства</caption>
+	<tbody>
+		<tr>
+			<td><span class="prob">Цвет</span></td>
+			<td><span class="prob">Прозрачность</span></td>
+			<td><span class="prob">уд вес</span></td>
+		</tr>
+		<tr>
+			<td><span class="prob">Реакция</span></td>
+			<td><span class="prob">Осадок</span></td>
+			<td><span class="prob">Урет. нити</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<caption>Ⅱ. Химический состав</caption>
+	<tbody>
+		<tr>
+			<td><span class="prob">Белок</span></td>
+			<td><span class="prob">Сахар</span></td>
+			<td><span class="prob">Гемоглобин</span></td>
+			<td><span class="prob">Желч. пигм.&nbsp; &nbsp; &nbsp;&nbsp;</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<caption>Ⅲ. Микроскопия</caption>
+	<tbody>
+		<tr>
+			<td><span class="prob">Лейкоциты</span></td>
+			<td><span class="prob">Эритроциты</span></td>
+			<td><span class="prob">Эпителий</span></td>
+		</tr>
+		<tr>
+			<td><span class="prob">Слизь</span></td>
+			<td><span class="prob">Цилиндры</span></td>
+			<td><span class="prob">Соли</span></td>
+		</tr>
+		<tr>
+			<td><span class="prob">Туб. палочки</span></td>
+			<td><span class="prob">Бактерии</span></td>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Исследовал ________________________________</p>

@@ -1,0 +1,169 @@
+#********************Centos6 desctop config
+
+#ssh to comp
+#ssh user1@hostname
+
+yum update
+yum install gedit opennx
+
+#change hostname
+hostname gr-cab204-2.gp2.loc
+#add hostname to localhost 
+nano /etc/hosts
+#change hostname to new
+nano /etc/sysconfig/network
+#check hostname
+hostname
+
+
+yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python -y
+yum install epel-release
+yum --enablerepo=epel -y install adcli sssd authconfig pam_krb5 samba4-common
+
+# change Authentication Provider
+[root@dlp ~]# authconfig \
+--enablekrb5 \
+
+--krb5kdc=gp2.loc \
+--krb5adminserver=gp2.loc \
+--krb5realm=Fgp2.loc \
+--enablesssd \
+--enablesssdauth \
+--update
+
+
+# make sure Active Directory domain info
+adcli info gp2.loc 
+#[domain]
+#domain-name = fd3s.srv.world
+#domain-short = FD3S01
+#domain-forest = fd3s.srv.world
+#domain-controller = fd3s.fd3s.srv.world
+#domain-controller-site = Default-First-Site-Name
+#domain-controller-flags = pdc gc ldap ds kdc timeserv closest writable good-timeserv full-secret ads-web
+#domain-controller-usable = yes
+#domain-controllers = fd3s.fd3s.srv.world
+#[computer]
+#computer-site = Default-First-Site-Name
+
+# join in Active Directory Domain
+adcli join gp2.loc --user=asalnikov
+#Password for Administrator@FD3S.SRV.WORLD:   # AD's Administrator password
+authconfig --enablesssd --update
+
+nano /etc/sssd/sssd.conf
+
+# create new (replace the hostname in example to your own one)
+[sssd]
+domains = gp2.loc
+config_file_version = 2
+services = nss, pam, autofs, sudo
+
+[domain/gp2.loc]
+ad_domain = gp2.loc
+krb5_realm = GP2.LOC
+realmd_tags = manages-system joined-with-samba
+cache_credentials = True
+id_provider = ad
+krb5_store_password_if_offline = True
+default_shell = /bin/bash
+ldap_id_mapping = True
+use_fully_qualified_names = False
+fallback_homedir = /home/%d/%u
+#access_provider = ad
+access_provider = simple
+simple_allow_users = p402pe93@gp2.loc
+simple_allow_groups = it_department@gp2.loc,linux_users@gp2.loc,пользователи домена@gp2.loc
+autofs_provider=ldap
+ldap_autofs_search_base=cn=automount,dc=example,dc=com
+ldap_autofs_map_object_class=automountMap
+ldap_autofs_entry_object_class=automount
+ldap_autofs_map_name=automountMapName
+ldap_autofs_entry_key=automountKey
+ldap_autofs_entry_value=automountInformation
+sudo_provider = ldap
+ldap_sudo_search_base = ou=it_department,dc=gp2,dc=loc
+
+[nss]
+filter_groups = root
+filter_users = root
+entry_cache_timeout = 300
+entry_cache_nowait_percentage = 75
+
+[autofs]
+
+[sudo]
+#--end
+
+chmod 600 /etc/sssd/sssd.conf 
+
+nano /etc/pam.d/system-auth
+# add follows to the end (generate home directory if not)
+ session     optional      pam_mkhomedir.so skel=/etc/skel umask=077 
+
+/etc/rc.d/init.d/sssd start 
+
+# make sure it's possible to get an AD user info or not
+[root@dlp ~]# id Serverworld 
+
+# make sure it's possible to switch to an AD user or not
+[root@dlp ~]# su - Serverworld 
+
+#Создаем новый файл в директории /etc/sudoers.d.
+nano /etc/sudoers.d/gp2
+
+	%it_department@gp2.loc ALL=(ALL) ALL
+#Обращаю внимание, что имя данного файла не должно содержать точки. Я сначала не знал об этом и сделал файл с именем xs.local и долго не мог понять, почему не работает. Когда изменил имя файла, все заработало.
+
+#Выставляем минимальные права на файл:
+chmod 0440 /etc/sudoers.d/gp2
+
+
+#Реализовать то же самое можно было через настройки sssd. В его конфиге можно было указать группы, которым разрешен доступ к sudo. Но в целом это не принципиально. Так, как сделал я, мне показалось проще. Не нужно использовать полные имена объектов в AD, в которых легко запутаться, особенно тем, кто не очень в этом ориентируется. Мне же понадобились только конечные имена групп. Более подробно об этом можно почитать в руководстве redhat. Ссылку приведу в конце.
+
+#Настройка Samba с интеграцией в AD через sssd
+pluma /etc/samba/smb.conf
+
+[global]
+workgroup = GP2
+security=ads
+encrypt password = yes
+realm=gp2.loc
+
+#----end
+
+#automount
+nano /etc/sssd/sssd.conf
+[sssd]
+services = nss,pam,autofs
+
+#Create a new [autofs] section. You can leave it empty.
+[autofs]
+
+service smb start
+
+#user list at logon
+gedit /etc/gdm/custom.conf
+	[greeter]
+	IncludeAll=true
+	Include=<user>
+
+
+#*****VNC******************************
+
+#iptables open port 5900
+
+#**********************File obmen***********
+#get uid by cmd under user
+id
+#under root
+gedit /etc/fstab
+
+//sqlserver/library\040documents/Файловый\040обмен      /home/gp2.loc/l3/Рабочий\040стол/Файловый\040обмен cifs user,uid=118001658,rw,suid,username=l3@gp2.loc,password=****** 9 0 0
+//sqlserver/library\040documents/Лечебная\040часть/Oksana\040Marinich   /home/gp2.loc/l3/Рабочий\040стол/Oksana\040Marinich cifs user,uid=118001658,rw,suid,username=l3@gp2.loc,password=***** 0 0
+
+
+
+#sync time
+
+realm join -U asalnikov gp2.loc

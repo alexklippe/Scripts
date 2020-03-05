@@ -1,0 +1,186 @@
+yum-config-manager --add-repo http://repo.red-soft.ru/redos/a1/x86_64/os
+yum install nxc* --nogpgcheck
+
+# repos /etc/yum.repos.d/
+
+***********************************
+#xs.local	название домена
+#10.1.3.4	ip адрес контроллера домена
+#xs-winsrv.xs.local	полное имя контроллера домена
+#xs-centos7-test	имя сервера centos, который вводим в домен
+#administrator	учетная запись администратора домена
+#gr_linux_adm	группа в AD, для которой разрешено подключение к серверам по ssh
+#lin-user	учетная запись в AD для проверки подключений по ssh
+
+
+pluma /etc/sysconfig/selinux
+
+reboot
+
+yum install openldap-clients --nogpgcheck
+
+
+systemctl stop firewalld && systemctl disable firewalld
+
+#Добавляем в конфиг /etc/chrony.conf адрес контроллера домена. И делаем его единственным сервером для синхронизации, остальные удаляем.
+
+pluma /etc/chrony.conf
+# add string
+server gp2.loc iburst
+#добавляем в автозагрузку
+systemctl start chronyd && systemctl enable chronyd
+
+#Проверим, что с синхронизацией.
+cat /var/log/messages | grep chronyd
+
+#Вводим Centos 7 в домен
+realm discover XS.LOCAL
+
+#ответ
+#xs.local
+#  type: kerberos
+#  realm-name: XS.LOCAL
+#  domain-name: xs.local
+#  configured: no
+#  server-software: active-directory
+#  client-software: sssd
+#  required-package: oddjob
+#  required-package: oddjob-mkhomedir
+#  required-package: sssd
+#  required-package: adcli
+#  required-package: samba-common-tools
+
+realm join -U asalnikov gp2.loc
+#комп должен появится в домене в списке компьютеров
+#Изменим немного конфиг sssd для того, чтобы не нужно было вводить полное имя домена при логине, а только username.
+
+pluma /etc/sssd/sssd.conf
+
+	use_fully_qualified_names = False
+
+#Разрешаем доменным пользователям создавать домашние директории:
+authconfig --enablemkhomedir --enablesssdauth --updateall
+
+#Запускаем службу sssd и добавляем в автозагрузку:
+systemctl enable sssd.service && systemctl restart sssd
+#Проверяем авторизацию по ssh, подключившись по любой доменной учетной записи.
+#лог авторизации тут 
+
+ /var/log/secure
+
+#Ограничение доступа ssh по группам и пользователям домена
+
+pluma /etc/sssd/sssd.conf
+
+	access_provider = simple
+	simple_allow_users = p402pe93@gp2.loc
+	simple_allow_groups = it_department@gp2.loc,linux_users@gp2.loc,пользователи домена@gp2.loc
+
+#Обращаю внимание, что параметр access_provider у вас уже будет установлен в другое значение. Надо это изменить. Вы можете добавить разрешение как для конкретного пользователя, так и для целых групп. Сохраняйте конфиг и перезапускайте sssd.
+
+systemctl restart sssd
+#Теперь подключиться по ssh к серверу сможет только пользователь домена p402pe93 и все члены группы it department.
+
+#Для разбора полетов и решения проблем нужно использовать лог файл — /var/log/secure.
+
+#Ограничение доступа к sudo по доменным группам
+
+#Создаем новый файл в директории /etc/sudoers.d.
+pluma /etc/sudoers.d/gp2
+
+	%it_department@gp2.loc ALL=(ALL) ALL
+
+#Обращаю внимание, что имя данного файла не должно содержать точки. Я сначала не знал об этом и сделал файл с именем xs.local и долго не мог понять, почему не работает. Когда изменил имя файла, все заработало.
+
+#Выставляем минимальные права на файл:
+chmod 0440 /etc/sudoers.d/gp2
+
+#Теперь вы можете зайти в систему доменной учетной записью из группы gr_linux_adm и получить полные права в системе.
+
+#Реализовать то же самое можно было через настройки sssd. В его конфиге можно было указать группы, которым разрешен доступ к sudo. Но в целом это не принципиально. Так, как сделал я, мне показалось проще. Не нужно использовать полные имена объектов в AD, в которых легко запутаться, особенно тем, кто не очень в этом ориентируется. Мне же понадобились только конечные имена групп. Более подробно об этом можно почитать в руководстве redhat. Ссылку приведу в конце.
+
+#Настройка Samba с интеграцией в AD через sssd
+pluma /etc/samba/smb.conf
+
+[global]
+workgroup = GP2
+security=ads
+encrypt password = yes
+realm=gp2.loc
+
+#как сделать общую папку
+[shara]
+comment = My shared folder
+path = /mnt/shara
+public = no
+writable = yes
+guest ok = no
+valid users = @"gr_it@xs.local"
+
+
+#Запускаем службу smb.service и добавляем в автозагрузку.
+systemctl start smb.service
+systemctl enable smb.service
+
+#https://serveradmin.ru/nastroyka-samba-s-integratsiey-v-ad/
+#https://serveradmin.ru/vvod-centos-7-v-domen-active-directory-i-avtorizatsiya-po-ssh-domennyih-polzovateley/
+
+#*********************************
+#VNC
+# Запускать от имени пользователя
+
+gsettings set org.gnome.Vino require-encryption false
+gsettings set org.gnome.Vino authentication-methods ['vnc']
+gsettings set org.gnome.Vino icon-visibility never
+gsettings set org.gnome.Vino notify-on-connect false
+gsettings set org.gnome.Vino prompt-enabled false
+gsettings set org.gnome.Vino vnc-password Y2JjbnR2ZjkK
+
+#http://ask.xmodulo.com/enable-configure-desktop-sharing-linux-mint-cinnamon-desktop.html
+
+#можно установить визуальный конфигуратор yum install dconf-editor
+#запустить от пользователя dconf-editor   "org->gnome->desktop->remote-access" 
+# пароль в base64 #echo "password" | base64
+#добавить в автозапуск система-запуск программ
+/usr/libexec/vino-server
+
+******************ШРИФТЫ*********************
+xorg-x11-fonts-cyrillic
+open-sans-fonts
+msttcore-fonts-installer
+***************************ИГРЫ****************************
+#games
+#добавить наш локальный репозиторий
+#Создайте файл конфигурации репозитория, например. /etc/yum.repos.d/gp2.repo содержащий
+
+[gp2repo]
+name=gp2 repo
+baseurl=http://developer.gp2.loc/repo/redos71
+enabled=1
+gpgcheck=0
+
+
+вариант 2 скачать aisleriot
+#******************MSSQL ODBC*********************
+#Для рецептов не нужно
+#скачать с репозитория майкрософта нужный драйвер и установить через rpm -i
+#packages.microsoft.com/rhel/7/prod/
+
+
+
+#********************WINE************************************
+*wine
+yum install wine* --nogpgcheck
+
+#********************РЕЦЕПТЫ***********************
+wget http://www.kegel.com/wine/winetricks
+sh winetricks fakeie6
+sh winetricks mdac28
+sh winetricks jet40
+
+wine full-recept-installer
+
+#config odbc  
+wine odbcad32.exe
+************************************PDF Printer **********
+yum install cups-pdf --nogpgcheck

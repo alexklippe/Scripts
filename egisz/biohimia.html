@@ -1,0 +1,227 @@
+<style type="text/css">.dat {
+Font-size:14px;
+  font-family:Serif;
+}
+   .prob {
+Font-size:14px;
+  font-weight:bold;
+      font-family:Serif;
+}
+td {
+  padding:1px;
+  font-size:9px;
+}
+</style>
+<table border="0" cellpadding="1" cellspacing="1">
+	<tbody>
+		<tr>
+			<td style="width:80%;padding:2px;">
+			<p>347924, Таганрог, ул.Дзержинского, 156<br />
+			Клинико-диагностическая лаборатория<br />
+			Тел. 8(8634)60-47-52</p>
+			</td>
+			<td style="border-color: rgb(0, 0, 0); text-align: center;width:200px;height:50px; vertical-align: top; border:1px;">Штрих код</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3 style="text-align: center; margin:0px; padding:0px"><strong>НАПРАВЛЕНИЕ НА ЛАБОРАТОРНОЕ ИССЛЕДОВАНИЕ</strong></h3>
+
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>
+		<tr>
+			<td><strong>Фамилия</strong></td>
+			<td><strong><span class="dat">[@pmc.surname]</span></strong></td>
+			<td><strong>Серия полиса</strong></td>
+			<td><strong><span class="dat">[@agent.polis_ser]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Имя</strong></td>
+			<td><strong><span class="dat">[@pmc.firstname]</span></strong></td>
+			<td><strong>Номер полиса</strong></td>
+			<td><strong><span class="dat">[@agent.polis_numb]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>отчество</strong></td>
+			<td><strong><span class="dat">[@pmc.lastname]</span></strong></td>
+			<td><strong>Код страховой компании</strong></td>
+			<td><strong><span class="dat">[@agent.ic_code]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Дата рождения</strong></td>
+			<td><strong><span class="dat">[@agent.birthdate], возраст [@pmc.age] </span></strong></td>
+			<td><strong>Пол</strong></td>
+			<td><strong><span class="dat">[@pmc.sex]</span></strong></td>
+		</tr>
+		<tr>
+			<td rowspan="1"><strong>Удостоверение личности</strong></td>
+			<td rowspan="1"><span class="dat" style="font-size: 9px;">[@agent.doc_type]</span></td>
+			<td><strong><span class="dat">[@agent.doc_ser]</span></strong></td>
+			<td><strong><span class="dat">[@agent.doc_numb]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Дата выдачи УЛ</strong></td>
+			<td><strong style="font-size: 9px;"><span class="dat">[@agent.doc_when]</span></strong></td>
+			<td><strong>СНИЛС</strong></td>
+			<td><strong><span class="dat">[@pmc.mask_snils]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Адрес проживания</strong></td>
+			<td colspan="3" rowspan="1"><strong><span class="dat">[@addr_real.adr_full]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Направление ЛПУ</strong></td>
+			<td><span class="dat" style="font-size: 8px;">[@lpu.fullname]</span></td>
+			<td><strong>Код ЛПУ</strong></td>
+			<td><strong><span class="dat">[@lpu.code_lpu]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Филиал</strong></td>
+			<td colspan="3" rowspan="1"><strong><span class="dat">[@visit.dep]</span></strong></td>
+		</tr>
+		<tr>
+			<td><strong>№ Участка, ФИО врача</strong></td>
+			<td colspan="3" rowspan="1"><span class="dat">[@visit.emp_fio], [@visit.emp_jobtitle],&nbsp;[@visit.emp_spec], [@visit.cablab]</span></td>
+		</tr>
+		<tr>
+			<td><strong>Время взятия материала</strong></td>
+			<td colspan="3" rowspan="1"><strong>&nbsp;</strong></td>
+		</tr>
+		<tr>
+			<td><strong>Направительный диагноз</strong></td>
+			<td colspan="3" rowspan="1"><span class="dat">[@mkb_main.code]&nbsp;&nbsp;[@mkb_main.mkb_name]</span></td>
+		</tr>
+	</tbody>
+</table>
+<br />
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>
+		<tr>
+			<td><span class="prob">☐-Коагулограмма:</span><br />
+			(ПТИ, МНО, АЧТВ, фибриноген)</td>
+			<td><span class="prob">☐-Д-димер</span></td>
+			<td  width="60px">Биохимия<br /> (голубая кр.)</td>
+			
+		</tr>
+	</tbody>
+</table>
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>
+		<tr>
+		<td><span class="prob">☐-Липидограмма:</span>
+			(ОХ, ТГ, ЛПВД, ИА, ЛПНП, индекс риска развития ИБС)<br />
+			<span class="prob">☐-Функциональные пробы печени:</span>
+			(общий билирубин, конъюг.билирубин, АСТ, АЛТ, ГГТП, ЩФ, а-амилаза
+			
+			</td><td>
+			<span class="prob">☐-Микроэлементы:</span>
+			(кальций, магний, фосфор, железо)<br />
+			<span class="prob">☐-Почечные пробы:</span>
+			(мочевина, креатинин, мочевая кислота)
+			</td><td>
+			<span class="prob">☐-Ревмопробы:</span>
+			(ОБ, альбумин, КФК, СРБ)<br />
+			<span class="prob">☐-Глюкоза крови</span><br />
+			<span class="prob">☐-Глюкозотолерантный тест</span><br />
+			</td>
+		<td style="writing-mode: tb-rl" width="18px">Биохимия крови<br /> (красная крышка)</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>	
+		<tr>
+			<td>
+			<span class="prob">☐-ТТГ</span>
+			<br /><span class="prob">☐-Т3</span>
+			<br /><span class="prob">☐-Т4</span>
+			<br /><span class="prob">☐-АТкТПО</span>
+			<br /><span class="prob">☐-PSA</span>
+			<br /><span class="prob">☐-HE-4</span>
+			<br /><span class="prob">☐-CA 125</span>
+			<br /><span class="prob">☐-РЭА</span>
+			<br /><span class="prob">☐-СА-19-9</span>
+			<br /><span class="prob">☐-СА-72-4</span>
+			<br /><span class="prob">☐-АФП</span>
+			<br /><span class="prob">☐-Кальцитонин</span>
+			<br /><span class="prob">☐-Ферритин</span>
+			</td>
+			<td>
+			
+			
+			
+			<span class="prob">☐-ЛГ</span>
+			<br /><span class="prob">☐-ФСГ</span>
+			<br /><span class="prob">☐-Пролактин</span>
+			<br /><span class="prob">☐-Прогестерон</span>
+			<br /><span class="prob">☐-Тестостерон</span>
+			<br /><span class="prob">☐-Эстрадиол</span>
+			<br /><span class="prob">☐-Кортизол</span>
+			<br /><span class="prob">☐-А/Т к краснухе (M/G)</span>
+			<br /><span class="prob">☐-А/Т к кори(G)</span>
+			<br /><span class="prob">☐-А/Т к ЦМВ (M/G)</span>
+			<br /><span class="prob">☐-А/Т к ВПГ(M/G)</span>
+			</td>
+			<td>
+			
+			
+			
+			<span class="prob">☐-А/Т к токсоплазме (M/G)</span>
+			<br /><span class="prob">☐-А/Т к ВЭБ (M/G)</span>
+			<br /><span class="prob">☐-А/Т к хлам.пневомон. (M/G)</span>
+			<br /><span class="prob">☐-А/Т к хлам.трахом. (M/G)</span>
+			<br /><span class="prob">☐-А/Т к микоплазмам (G)</span>
+			<br /><span class="prob">☐-А/Т к уреплазмам (G)</span>
+			<br /><span class="prob">☐-А/Т к лямблиям</span>
+			<br /><span class="prob">☐-А/Т к описторхозу</span>
+			<br /><span class="prob">☐-А/Т к аскаридозу</span>
+			
+			</td>
+						<td>
+			
+			<span class="prob">☐-А/Т к токсокарозу</span>
+			<br /><span class="prob">☐-Ревмофактор</span>
+			<br /><span class="prob">☐-С-пептид</span>
+			<br /><span class="prob">☐-витамин Д</span>
+			<br /><span class="prob">☐-Ig E общий</span>
+			<br /><span class="prob">☐-Аллекрготесты бытовые</span>
+			<br /><span class="prob">☐-Аллекрготесты пищевые</span>
+			<br /><span class="prob">☐-Аллекрготесты грибковые</span>
+			<br /><span class="prob">☐-Аллекрготесты пыльцевые</span>
+			</td>
+			<td style="writing-mode: tb-rl" width="18px">Имуннохимические и иммуноферментные исследования<br /> (красная крышка)</td>
+		</tr>
+	</tbody>
+</table>
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>	
+		<tr>
+			<td>
+				<span class="prob">☐-Иммунограмма</span>
+			(включает ОАК)<i>(вакутейнер с сиреневой и красной крышкой)</i>
+			</td>
+			<td>
+				<span class="prob">☐-Натрийуретический пептид</span>(вакутейнер с зеленой крышкой)
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>		
+		<tr>
+	
+			<td><span class="prob">☐-ОАК </span>(развернутый)
+			<br /><span class="prob">☐-Гликозилированный гемоглобин</span></td>
+			<td><span class="prob">☐-ПЦР (ВУИ, ВЭБ)</span>
+			<br /><span class="prob">☐-ПЦР Гепатит С</span>
+			<br /><span class="prob">☐-ПЦР Гепатит В</span></td>
+			<td><span class="prob">☐-Группа крови</span>
+			<br /><span class="prob">☐-МРП</span></td>
+			<td style="writing-mode: tb-rl" width="18px">Гематология, ПЦР<br /> (сиреневая кр.)</td>
+		</tr>
+			</tbody>
+</table>
+
+<p>Общее количество отметок ____ (&quot;галочек&quot;)&nbsp; &nbsp; &nbsp;Подпись врача __________________&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;м.п.</p>

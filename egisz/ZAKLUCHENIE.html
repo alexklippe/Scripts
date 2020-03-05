@@ -1,0 +1,152 @@
+<style type="text/css">.column {
+  float: left;
+  padding:2px;
+  font-family:Liberation Sans;
+  font-size:12px;
+}
+  td{
+    padding:2px;
+	font-size:10px;
+  }
+ 
+  strong {
+  font-family:Liberation Sans;
+    font-weight:bold;
+    text-decoration:underline;
+    font-size:10px;
+  }
+  .4370901_soder{
+    font-size:12px;
+	font-family:Liberation Sans;
+  }
+  .4370901_head {
+     font-size:10px;
+	font-family:Liberation Sans;
+    text-align: center;
+  }
+</style>
+<div class="row">
+<div class="column">
+<table border="0" cellpadding="5" cellspacing="1" style="width:100%;">
+	<tbody>
+		<tr>
+			<td width="40px"><img alt="" src="http://192.168.2.244/gp2_3.png" style="width: 35px; height: 35px; float: left;" /></td>
+			<td class=".4370901_head" width="100%"><strong>[@lpu.fullname]</strong></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="text-align: center; ">[@lpu.FULLADDRESS] ([@visit.dep])</span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span>сайт: https://<strong>tgp2.ru</strong>, электронная почта: <strong>tagmuz@tgp2.ru</strong>; Колл-центр: <strong>+7(8634)619-300</strong></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<hr />
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>
+		<tr>
+			<td><strong style="text-align: left;">[@visit.EMP_JOBTITLE]: [@visit.EMP_FIO]</strong></td>
+			<td style="text-align: right;"><strong style="text-align: right;">[Дата: @visit.VISIT_DATE]</strong></td>
+		</tr>
+		<tr>
+			<td style="text-align: left;"><u><b>Пациент: [@patient.FIO]&nbsp;&nbsp;</b></u>д.р.: [@patient.BIRTHDATE]</td>
+			<td style="text-align: right;"><u><b>Возраст: [@patient.age]</b></u></td>
+		</tr>
+		<tr>
+			<td style="text-align: left; font-size:10px;">Адрес: [@patient.ADDRESS]</td>
+			<td style="text-align: right;">полис: [@patient.POLIS_NUMB]</td>
+		</tr>
+	</tbody>
+</table>
+
+<p style="text-align: center;"><b>Заключение</b></p>
+<span class="4370901_soder">[<strong>Жалобы при обращении:</strong> @fields.CA_COMPLAINTS<br />
+] [<strong>Анамнез:&nbsp;</strong> @fields.CA_ANAMNES<br />
+] [<strong>Объективный статус:&nbsp;</strong> @fields.CO_OBJSTATE<br />
+] [<strong>Диагноз:&nbsp;</strong> @mkb_main.DIAGNOSES<br />
+] [<strong>Диагноз (осложнение основного):&nbsp;</strong> @mkb_osl.DIAGNOSES<br />
+] </span>
+
+<div>
+<div><span class="4370901_soder">[#suppress;mkb_sop]</span></div>
+
+<div><span class="4370901_soder"><strong>Диагноз сопутствующий:&nbsp;</strong> </span>
+
+<table border="0" cellpadding="1" cellspacing="1" style="width: 100%">
+	<tbody>
+		<tr>
+			<td><span class="4370901_soder">[#row;mkb_sop]</span></td>
+		</tr>
+		<tr>
+			<td><span class="4370901_soder">[@.DIAGNOSES]</span></td>
+		</tr>
+		<tr>
+			<td><span class="4370901_soder">[#endrow]</span></td>
+		</tr>
+	</tbody>
+</table>
+<span class="4370901_soder"> </span></div>
+
+<div><span class="4370901_soder">[#endsuppress]</span></div>
+</div>
+<span class="4370901_soder"> </span>
+
+<div>
+<div>[#suppress;visit_dirs]</div>
+
+<div><span class="4370901_soder"><strong>Направления:</strong></span></div>
+
+<div>
+<table border="0" cellpadding="1" cellspacing="1" height="63" width="675">
+	<tbody>
+		<tr>
+			<td><span class="4370901_soder">[#row;visit_dirs]</span></td>
+		</tr>
+		<tr>
+			<td><span class="4370901_soder">[@.REC_DATE] [@.SERVICE_NAME] [@.EMPLOYER_FIO_TO] [@.CABLAB_TO_NAME]</span></td>
+		</tr>
+		<tr>
+			<td><span class="4370901_soder">[#endrow;]</span></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+
+<div>[#endsuppress]</div>
+</div>
+<span class="4370901_soder"> [<strong>Рекомендовано:</strong>&nbsp; @fields.RECOMEND_CONS] </span> 
+  <span class="4370901_soder">
+  
+  <div>
+<div>[#suppress;visit_nazn_active]</div>
+
+<div><span class="4370901_soder"><strong>Назначения:</strong></span></div>
+
+<div>
+<table border="0" cellpadding="1" cellspacing="1" height="63" width="675">
+	<tbody>
+		<tr>
+			<td><span class="4370901_soder">[#row;visit_nazn_active]</span></td>
+		</tr>
+		<tr>
+			<td><span class="4370901_soder">[@.NOMMODIF_NAME] [@.DOSE] [@.DAYS_FULL] [@.COMMENTARY]</span></td>
+		</tr>
+		<tr>
+			<td><span class="4370901_soder">[#endrow;]</span></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+
+<div>[#endsuppress]</div>
+</div>
+  
+  [<strong>Лечение:</strong>&nbsp; @fields.CONS_LECH] 
+  </span>
+
+<p>[<strong>@visit.EMP_JOBTITLE</strong>]&nbsp; [@visit.EMP_FIO_SHORT] ________________&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; мп</p>
+</div>
+</div>

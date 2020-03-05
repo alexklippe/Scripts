@@ -1,0 +1,99 @@
+<style>
+.dat {
+Font-size:16px;
+  font-weight:bold;
+}
+td {
+  padding:10px;
+}
+</style>
+<table border="0" cellpadding="1" cellspacing="1">
+	<tbody>
+		<tr>
+			<td style="width:80%;">
+			<p>347924, Таганрог, ул.Дзержинского, 156<br />
+			Клинико-диагностическая лаборатория<br />
+			Тел. 8(8634)60-47-52</p>
+			</td>
+			<td style="border-color: rgb(0, 0, 0); text-align: center;width:200px;height:50px; vertical-align: top; border:1px;">Штрих код</td>
+		</tr>
+	</tbody>
+</table>
+
+<h1 style="text-align: center;"><strong>НАПРАВЛЕНИЕ НА ЛАБОРАТОРНОЕ ИССЛЕДОВАНИЕ</style></h1>
+
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:100%;">
+	<tbody>
+		<tr>
+			<td>Фамилия</td>
+			<td><span class="dat">[@pmc.surname]</span></td>
+			<td>Серия полиса</td>
+			<td><span class="dat">[@patient.polis_ser]</span></td>
+		</tr>
+		<tr>
+			<td>Имя</td>
+			<td><span class="dat">[@pmc.firstname]</span></td>
+			<td>Номер полиса</td>
+			<td><span class="dat">[@patient.polis_numb]</span></td>
+		</tr>
+		<tr>
+			<td>отчество</td>
+			<td><span class="dat">[@pmc.lastname]</span></td>
+			<td>Код страховой компании</td>
+			<td><span class="dat">[@patient.ic_code]</span></td>
+		</tr>
+		<tr>
+			<td>Дата рождения</td>
+			<td><span class="dat">[@patient.birthdate], возраст [@patient.age] </span></td>
+			<td>Пол</td>
+			<td><span class="dat">[@patient.sex]</span></td>
+		</tr>
+		<tr>
+			<td colspan="2" rowspan="1">Удостоверение личности</td>
+			<td><span class="dat">[@patient.doc_ser]</span></td>
+			<td><span class="dat">[@patient.doc_numb]</span></td>
+		</tr>
+		<tr>
+			<td>Дата выдачи УЛ</td>
+			<td>&nbsp;</td>
+			<td>СНИЛС</td>
+			<td><span class="dat">[@pmc.mask_snils]</span></td>
+		</tr>
+		<tr>
+			<td>Адрес проживания</td>
+			<td colspan="3" rowspan="1"><span class="dat">[@patient.address]</span></td>
+		</tr>
+		<tr>
+			<td>Направление ЛПУ</td>
+			<td><span class="dat">[@lpu.fullname]</span></td>
+			<td>Код ЛПУ</td>
+			<td><span class="dat">[@lpu.code_lpu]</span></td>
+		</tr>
+		<tr>
+			<td>Филиал</td>
+			<td colspan="3" rowspan="1"><span class="dat">[@visit.dep]</span></td>
+		</tr>
+		<tr>
+			<td>№ Участка, ФИО врача</td>
+			<td colspan="3" rowspan="1"><span class="dat">[@visit.emp_fio], [@visit.emp_jobtitle],&nbsp;[@visit.emp_spec], [@visit.cablab]</span></td>
+		</tr>
+		<tr>
+			<td>Время взятия материала</td>
+			<td colspan="3" rowspan="1">&nbsp;</td>
+		</tr>
+		<tr>
+			<td>Направительный диагноз</td>
+			<td colspan="3" rowspan="1">&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<table align="center" border="1" cellpadding="1" cellspacing="1" style="width: 1076.25px;">
+	<tbody>
+		<tr>
+			<td><span style="font-size: 12px; font-size: 13px;">[@patient.birthdate]</span></td>
+		</tr>
+	</tbody>
+</table>

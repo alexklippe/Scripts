@@ -1,0 +1,215 @@
+#************************centos 7 Postgres, Firebird
+firewall-cmd --add-port=22/tcp --permanent
+firewall-cmd --reload     #Apply the rule on-fly
+nano /etc/ssh/sshd_config
+PermitRootLogin yes
+systemctl restart sshd
+
+firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 0 -p icmp -s 0.0.0.0/0 -d 0.0.0.0/0 -j ACCEPT
+firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
+firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 443 -j ACCEPT
+firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 53 -j ACCEPT
+firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p udp --dport 53 -j ACCEPT
+firewall-cmd --reload
+
+nano /etc/sysconfig/selinux
+	SELINUX=disabled
+
+#REBOOT
+shutdown -r now
+
+yum update
+yum upgrade
+yum clean all
+
+shutdown -r now
+
+#***install firebird***   https://www.dmosk.ru/miniinstruktions.php?mini=firebird-centos7
+
+yum install epel-release
+yum install firebird
+systemctl enable firebird-classic.socket
+systemctl start firebird-classic.socket
+firewall-cmd --permanent --add-port=3050/tcp
+firewall-cmd --reload
+
+#—мена парол€ дл€ пользовател€
+#ѕодключаемс€ к —”Ѕƒ:
+gsec -user sysdba -password masterkey            #* где sysdba и masterkey Ч логин и пароль пользовател€, который создаетс€ при установке firebird.
+#ћен€ем пароль:
+
+modify SYSDBA -pw newpassword
+
+#—оздание базы данных
+#ѕодключаемс€ к —”Ѕƒ:
+isql-fb
+#—оздаем базу данных двум€ командами:
+SQL> CREATE DATABASE '/var/lib/firebird/data/newbase.fdb'
+CON> user 'SYSDBA' password 'newpassword';
+#ќтключаемс€:
+SQL> quit;
+#«адаем владельца дл€ файла созданной базы:
+chown firebird:firebird /var/lib/firebird/data/newbase.fdb
+#ƒл€ простого обращени€ к базе открываем на редактирование следующий файл:
+nano /etc/firebird/aliases.conf
+#ƒобавл€ем строчку:
+	newbase = /var/lib/firebird/data/newbase.fdb
+#* где /var/lib/firebird/data/newbase.fdb Ч путь до созданной базы; newbase Ч ее краткое им€.
+
+#ѕодключитьс€ к базе можно следующей командой:
+isql-fb
+SQL> CONNECT newbase
+CON> user 'SYSDBA' password 'newpassword';
+#ћы должны увидеть:
+	#Database:  newbase, User: SYSDBA 
+
+***********************Postgres
+#https://www.linode.com/docs/databases/postgresql/how-to-install-postgresql-relational-databases-on-centos-7/
+
+yum install postgresql-server postgresql-contrib
+postgresql-setup initdb
+systemctl start postgresql
+systemctl enable postgresql
+firewall-cmd --permanent --add-port=5432/tcp
+firewall-cmd --reload
+
+#By default, PostgreSQL will create a Linux user named postgres to access the database software.
+
+#Change the postgres userТs Linux password:
+sudo passwd postgres
+
+#Issue the following commands to set a password for the postgres database user. Be sure to replace newpassword with a strong password and keep it in a secure place.
+
+su - postgres
+psql -d template1 -c "ALTER USER postgres WITH PASSWORD '4erevi4kI1!!';"
+
+
+#Note that this user is distinct from the postgres Linux user. The Linux user is used to access the database, and the PostgreSQL user is used to perform administrative tasks on the databases.
+
+#The password set in this step will be used to connect to the database via the network. Peer authentication will be used by default for local connections. See the Secure Local PostgreSQL Access section for information about changing this setting.
+
+nano  /var/lib/pgsql/data/pg_hba.conf
+#append
+	host all all 192.168.2.0/24 trust
+nano /var/lib/pgsql/data/postgresql.conf
+
+#Find configuration line that read as follows:
+	listen_addresses='localhost'
+
+#Next set IP address(es) to listen on; you can use comma-separated list of addresses; defaults to СlocalhostТ, and С*Т is all ip address:
+	listen_addresses='*'
+
+#Or just bind to 202.54.1.2 and 202.54.1.3 IP address
+	listen_addresses='202.54.1.2 202.54.1.3'
+
+systemctl restart postgresql
+
+#create user
+su postgres
+createuser -Pdr fss
+
+#under root
+localedef -c -i ru_RU -f CP1251 ru_RU.CP1251
+
+#*********Access the PostgreSQL Shell
+su postgres
+psql postgres
+
+#Create a Database
+createdb mytestdb
+#ItТs also possible to assign ownership of the database to a specific Postgres user/role. For example, you could assign ownership to the examplerole role by running:
+createdb mytestdb -O examplerole
+
+#Connect to a DatabasePermalink
+psql mytestdb
+#By default, you will connect to a database as your peer-authenticated user. However, if youТve enabled local password access, itТs also possible to specify which user you wish to connect as:
+psql mytestdb -U examplerole
+
+#List Databases
+postgres=# \l
+
+#Delete a Database
+dropdb mytestdb
+
+
+#***********************change root password
+#https://www.tecmint.com/centos-7-initial-server-setup-and-configuration/
+sudo passwd root
+
+
+#***********************change HOST Name
+sudo nmtui-hostname
+
+#***********************Change IP
+nmtui
+nmtui-connect
+
+#***********************Network DIAG
+# netstat -tulpn
+# ss -tulpn
+# lsof -i4 -6
+
+#***********************Check network connection
+mii-tool
+
+#***********************Manage Services in CentOS 7
+systemctl list-units
+systemctl list-unit-files -t service
+#check old services
+# chkconfig --list
+# chkconfig service_name off
+
+#***Disable Unwanted Services in CentOS 7
+# systemctl stop postfix
+# systemctl disable postfix
+# yum remove postfix
+
+#**************************firewall
+# firewall-cmd --add-service=[tab]  #List services
+# firewall-cmd --add-service=ssh
+# firewall-cmd --add-service=ssh --permanent
+firewall-cmd --add-port=22/tcp --permanent
+firewall-cmd --reload     #Apply the rule on-fly
+
+#**************************Enable Sudo Permissions on User Accounts
+# adduser tecmint   #where tecmint is a user
+# passwd tecmint
+# usermod -aG wheel tecmint
+
+#**************************Configure SSH Public Key Authentication on CentOS 7
+#In order to secure SSH your server and set up public key authentication to increase the security of your server with a private SSH key to log in, first generate a SSH Key Pair with a following command.
+
+#DonТt not enter a passphrase in case you want to automate server management via SSH.
+
+ssh-keygen -t RSA
+#After the SSH key pairs had been generated, copy the key to the server you want to connect to by issuing the below command. Initially, enter you remote SSH user password in order to copy the public key.
+
+ssh-copy-id remote_user@SSH_SERVER_IP
+
+#After the SSH public key has been copied to the remote server, login to the remote SSH server with the following command.
+
+ssh remote_user@SSH_SERVER_IP
+
+#Finally, in order to secure the SSH server, make sure you disallow remote SSH access to the root account by opening the configuration SSH file /etc/ssh/sshd_config with your text editor as root and change it from Yes to No.
+
+PermitRootLogin no
+
+#To apply the setting you need to restart the SSH service so that it will use the new configuration.
+
+systemctl restart sshd
+#********************** update
+
+yum check-update
+yum upgrade
+yum clean all
+
+#********************** firebird backup restore*************
+#http://www.ibase.ru/gbak/
+
+gbak -b employee.fdb emp.fbk -user SYSDBA -pass masterke #локально
+server:c:\Firebird\bin\e.fdb  # на удаленном сервере
+gbak -b 
+#восстановление
+gbak -c e.fbk e.fdb
+gbak -c D:\backup\FSS
