@@ -1,0 +1,12 @@
+выполнить шаги из настройки арм
+установить корневые сертификаты в систему 
+экспорт из pem. Можно скопировать содержимое по отдельности в crt каждый
+sudo openssl x509 -outform der -outform pem -in ~/ya_vpn/ya2.pem -out ~/ya_vpn/ya-ca2.crt
+
+скопировать crt в /usr/local/share/ca-certificates/
+
+sudo update-ca-certificates
+
+sudo apt-get install libccid pcscd libpcsclite1 pcsc-tools opensc pkcs11-tool
+
+после этого заработал
